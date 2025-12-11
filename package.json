@@ -1,15 +1,32 @@
 {
   "name": "ceboelha-api",
-  "version": "1.0.50",
+  "version": "0.1.0",
+  "description": "API do Ceboelha - Seu companheiro para gerenciar a SII",
+  "author": "jmcdutra",
+  "license": "MIT",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "test": "bun test",
+    "lint": "bunx biome check src/",
+    "format": "bunx biome format src/ --write",
+    "db:seed": "bun run src/scripts/seed.ts"
   },
   "dependencies": {
-    "elysia": "latest"
+    "@elysiajs/bearer": "^1.4.1",
+    "@elysiajs/cors": "^1.4.0",
+    "@elysiajs/jwt": "^1.4.0",
+    "@elysiajs/swagger": "^1.3.1",
+    "bcrypt": "^6.0.0",
+    "dayjs": "^1.11.19",
+    "elysia": "latest",
+    "jose": "^6.1.3",
+    "mongoose": "^9.0.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.0",
+    "@types/bcrypt": "^6.0.0",
     "bun-types": "latest"
-  },
-  "module": "src/index.js"
+  }
 }

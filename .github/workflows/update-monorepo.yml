@@ -1,0 +1,38 @@
+name: Update Monorepo Submodule
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  update-submodule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout monorepo
+        uses: actions/checkout@v4
+        with:
+          repository: jmcdutra/ceboelha
+          token: ${{ secrets.MONOREPO_PAT }}
+          submodules: false
+          fetch-depth: 0
+
+      - name: Configure git credentials
+        run: |
+          git config --global url."https://x-access-token:${{ secrets.MONOREPO_PAT }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Update ceboelha-api submodule
+        run: |
+          git submodule update --init ceboelha-api
+          cd ceboelha-api
+          git fetch origin
+          git checkout ${{ github.sha }}
+          cd ..
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add ceboelha-api
+          git diff --staged --quiet || git commit -m "chore: update ceboelha-api to ${{ github.sha }}"
+          git push
