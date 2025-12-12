@@ -173,14 +173,13 @@ diaryEntrySchema.index({ userId: 1, type: 1, 'symptom.intensity': -1 })
 // Validation
 // =============================================================================
 
-diaryEntrySchema.pre('validate', function (next) {
+diaryEntrySchema.pre('validate', function () {
   if (this.type === 'meal' && !this.meal) {
     this.invalidate('meal', 'Dados da refeição são obrigatórios quando type é "meal"')
   }
   if (this.type === 'symptom' && !this.symptom) {
     this.invalidate('symptom', 'Dados do sintoma são obrigatórios quando type é "symptom"')
   }
-  next()
 })
 
 // =============================================================================
