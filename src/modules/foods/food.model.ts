@@ -67,15 +67,34 @@ export interface IFood extends Document {
 // Schema
 // =============================================================================
 
+// Schema for individual ingredients in multiple_ingredients match
+const fodmapIngredientSchema = new Schema(
+  {
+    portuguese_keyword: String,
+    name_english: String,
+    level: {
+      type: String,
+      enum: ['free', 'low', 'medium', 'high'],
+    },
+    portion_note: { type: String, default: null },
+    category: String,
+  },
+  { _id: false }
+)
+
 const fodmapSearchInfoSchema = new Schema(
   {
     match_type: {
       type: String,
       enum: ['single_ingredient', 'multiple_ingredients'],
     },
+    // Fields for single_ingredient match
     category: String,
     name_english: String,
     detected_keyword: String,
+    // Fields for multiple_ingredients match
+    total_ingredients: Number,
+    ingredients: [fodmapIngredientSchema],
   },
   { _id: false }
 )
@@ -179,7 +198,7 @@ const foodSchema = new Schema<IFood>(
   {
     timestamps: true,
     toJSON: {
-      transform: (_, ret) => {
+      transform: (_, ret: Record<string, unknown>) => {
         delete ret.__v
         return ret
       },
