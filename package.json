@@ -11,7 +11,8 @@
     "test": "bun test",
     "lint": "bunx biome check src/",
     "format": "bunx biome format src/ --write",
-    "db:seed": "bun run src/scripts/seed.ts"
+    "db:seed": "bun run src/scripts/seed.ts",
+    "db:seed-foods": "bun run scripts/seed-foods.ts"
   },
   "dependencies": {
     "@elysiajs/bearer": "^1.4.1",

@@ -1,7 +1,7 @@
 # 🧅 Ceboelha API - Plano de Desenvolvimento do Backend
 
-> **Última Atualização:** 11/12/2024
-> **Status:** 📋 Planejamento Concluído - Aguardando Aprovação
+> **Última Atualização:** 12/12/2025
+> **Status:** 🚧 Em Desenvolvimento - Etapas 01-04 Concluídas
 > **Stack:** Bun + Elysia + Mongoose + MongoDB
 
 ---
@@ -417,7 +417,7 @@ src/
 ---
 
 # ETAPA 03: Profile e Gerenciamento de Conta
-**Status:** ⬜ Não Iniciada
+**Status:** ✅ Concluída (12/12/2024)
 **Estimativa:** 2-3 horas
 **Dependências:** Etapa 02
 
@@ -427,7 +427,7 @@ Implementar endpoints de perfil do usuário autenticado.
 ## Tarefas
 
 ### 3.1 Users Service
-- [ ] Criar `src/modules/users/users.service.ts`:
+- [x] Criar `src/modules/users/users.service.ts`:
   - `getProfile(userId)` → retorna dados completos
   - `updateProfile(userId, data)` → atualiza dados
   - `updateEmail(userId, newEmail, password)` → verifica senha + atualiza
@@ -436,7 +436,7 @@ Implementar endpoints de perfil do usuário autenticado.
   - `deleteAccount(userId, password)` → soft delete ou hard delete
 
 ### 3.2 Profile Controller
-- [ ] Criar `src/modules/users/users.controller.ts`:
+- [x] Criar `src/modules/users/users.controller.ts`:
   ```
   GET /profile
   PATCH /profile
@@ -447,16 +447,16 @@ Implementar endpoints de perfil do usuário autenticado.
   ```
 
 ### 3.3 Validação de Schemas
-- [ ] Criar `src/modules/users/users.schemas.ts`:
+- [x] Criar `src/modules/users/users.schemas.ts`:
   - `updateProfileSchema`
   - `changeEmailSchema`
   - `changePasswordSchema`
   - `deleteAccountSchema`
 
 ### 3.4 Upload de Avatar (Básico)
-- [ ] Implementar upload básico com salvamento local (ou placeholder para S3/Cloudinary)
-- [ ] Validar tipo de arquivo (jpg, png, webp)
-- [ ] Limitar tamanho (max 5MB)
+- [x] Implementar upload básico com salvamento local (ou placeholder para S3/Cloudinary)
+- [x] Validar tipo de arquivo (jpg, png, webp)
+- [x] Limitar tamanho (max 5MB)
 
 ## Endpoints
 
@@ -478,17 +478,17 @@ src/modules/users/
 ```
 
 ## Critérios de Aceitação
-- [ ] Usuário consegue ver seu perfil
-- [ ] Usuário consegue atualizar nome e preferências
-- [ ] Alteração de email requer senha
-- [ ] Alteração de senha requer senha atual
-- [ ] Upload de avatar funciona
-- [ ] Exclusão de conta requer senha
+- [x] Usuário consegue ver seu perfil
+- [x] Usuário consegue atualizar nome e preferências
+- [x] Alteração de email requer senha
+- [x] Alteração de senha requer senha atual
+- [x] Upload de avatar funciona
+- [x] Exclusão de conta requer senha
 
 ---
 
 # ETAPA 04: Base de Dados de Alimentos (Foods)
-**Status:** ⬜ Não Iniciada
+**Status:** ✅ Concluída (12/12/2025)
 **Estimativa:** 3-4 horas
 **Dependências:** Etapa 01
 
@@ -498,21 +498,21 @@ Implementar a base de alimentos com busca otimizada e filtros FODMAP.
 ## Tarefas
 
 ### 4.1 Model de Food
-- [ ] Criar `src/modules/foods/food.model.ts`:
+- [x] Criar `src/modules/foods/food.model.ts`:
   - Schema completo conforme `foods.schema.md`
   - Índice de texto para busca
   - Índices para filtros (fodmap.level, category)
-  - Virtual para `displayName`
+  - Dados nutricionais completos (macros, vitaminas, minerais)
 
 ### 4.2 Foods Service
-- [ ] Criar `src/modules/foods/foods.service.ts`:
-  - `search(query, filters, pagination)` → busca com text search
-  - `getById(id)` → busca por ID
+- [x] Criar `src/modules/foods/foods.service.ts`:
+  - `searchFoods(query, filters, pagination)` → busca com regex para autocomplete
+  - `getFoodById(id)` → busca por ID numérico
   - `getCategories()` → lista categorias únicas
   - `incrementSearchCount(id)` → analytics
 
 ### 4.3 Foods Controller
-- [ ] Criar `src/modules/foods/foods.controller.ts`:
+- [x] Criar `src/modules/foods/foods.controller.ts`:
   ```
   GET /foods
   GET /foods/:id
@@ -520,18 +520,19 @@ Implementar a base de alimentos com busca otimizada e filtros FODMAP.
   ```
 
 ### 4.4 Script de Seed
-- [ ] Criar `scripts/seed-foods.ts`:
+- [x] Criar `scripts/seed-foods.ts`:
   - Ler `unified_food_database.json` de ceboelha-data
-  - Inserir todos os alimentos no MongoDB
-  - Criar índices automaticamente
+  - Inserir 1372 alimentos no MongoDB
+  - 748 alimentos com dados FODMAP
+  - 21 categorias únicas
+  - Criar índices de texto automaticamente
 
 ### 4.5 Otimização de Busca
-- [ ] Implementar busca com:
-  - Text search do MongoDB
-  - Relevance score
+- [x] Implementar busca com:
+  - Regex para busca parcial/prefixo (melhor UX para autocomplete)
   - Filtro por nível FODMAP
   - Filtro por categoria
-  - Paginação eficiente
+  - Paginação eficiente (limite 1-100)
 
 ## Endpoints
 
@@ -565,12 +566,12 @@ scripts/
 ```
 
 ## Critérios de Aceitação
-- [ ] Busca textual funciona com relevância
-- [ ] Filtros por FODMAP funcionam
-- [ ] Filtros por categoria funcionam
-- [ ] Paginação funciona corretamente
-- [ ] Script de seed popula banco
-- [ ] Performance: < 100ms para buscas
+- [x] Busca textual funciona com busca parcial ("alh" encontra "alho")
+- [x] Filtros por FODMAP funcionam (free, low, medium, high)
+- [x] Filtros por categoria funcionam (21 categorias)
+- [x] Paginação funciona corretamente
+- [x] Script de seed popula banco (1372 alimentos)
+- [x] Integrado com frontend
 
 ---
 

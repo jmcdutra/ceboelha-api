@@ -16,6 +16,10 @@ import { env } from '@/config'
 import { errorHandler } from '@/shared/errors'
 import { globalRateLimiter } from '@/shared/middlewares'
 import { authController } from '@/modules/auth'
+import { usersController } from '@/modules/users'
+import { foodsController } from '@/modules/foods'
+import { diaryController } from '@/modules/diary'
+import { problematicFoodsController } from '@/modules/problematic-foods'
 
 // =============================================================================
 // Create App
@@ -155,7 +159,12 @@ export const app = new Elysia({ name: 'ceboelha-api' })
   // API Routes (prefixo /api)
   // ============================================================================
   .group('/api', (app) =>
-    app.use(authController)
+    app
+      .use(authController)
+      .use(usersController)
+      .use(foodsController)
+      .use(diaryController)
+      .use(problematicFoodsController)
   )
 
   // ============================================================================
