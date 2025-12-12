@@ -40,6 +40,33 @@ export interface UserPreferences {
   fodmapPhase: FodmapPhase
 }
 
+// =============================================================================
+// Diet Settings Types
+// =============================================================================
+
+export type DietPreset = 'custom' | 'maintenance' | 'cutting' | 'bulking' | 'lowcarb' | 'balanced'
+export type DiaryMode = 'quick' | 'detailed'
+
+export interface DailyLimits {
+  calories: number     // kcal
+  carbs: number        // g
+  protein: number      // g
+  fat: number          // g
+  sugar: number        // g
+  fiber: number        // g
+  sodium: number       // mg
+}
+
+export interface DietSettings {
+  enabled: boolean
+  preset: DietPreset
+  limits: DailyLimits
+  showRemaining: boolean      // Mostrar quanto falta vs quanto comeu
+  showProgressBars: boolean
+  warningThreshold: number    // % para alertar (ex: 80%)
+  diaryMode: DiaryMode        // quick = só alimentos, detailed = com macros
+}
+
 export interface UserStats {
   daysUsingApp: number
   totalMealsLogged: number

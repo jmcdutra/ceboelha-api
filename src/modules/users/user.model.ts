@@ -18,6 +18,7 @@ import type {
   UserPreferences,
   UserStats,
   SpecialMessage,
+  DietSettings,
 } from '@/shared/types'
 
 // =============================================================================
@@ -33,6 +34,7 @@ export interface IUser extends Document {
   role: UserRole
   status: UserStatus
   preferences: UserPreferences
+  dietSettings: DietSettings
   stats: UserStats
   // Easter egg 💕
   isSpecial?: boolean
@@ -74,6 +76,40 @@ const statsSchema = new Schema<UserStats>(
     foodsTested: { type: Number, default: 0 },
     triggersIdentified: { type: Number, default: 0 },
     lastActive: { type: Date, default: Date.now },
+  },
+  { _id: false }
+)
+
+const dailyLimitsSchema = new Schema(
+  {
+    calories: { type: Number, default: 2000 },
+    carbs: { type: Number, default: 225 },
+    protein: { type: Number, default: 75 },
+    fat: { type: Number, default: 65 },
+    sugar: { type: Number, default: 40 },
+    fiber: { type: Number, default: 28 },
+    sodium: { type: Number, default: 2300 },
+  },
+  { _id: false }
+)
+
+const dietSettingsSchema = new Schema<DietSettings>(
+  {
+    enabled: { type: Boolean, default: false },
+    preset: {
+      type: String,
+      enum: ['custom', 'maintenance', 'cutting', 'bulking', 'lowcarb', 'balanced'],
+      default: 'balanced',
+    },
+    limits: { type: dailyLimitsSchema, default: () => ({}) },
+    showRemaining: { type: Boolean, default: true },
+    showProgressBars: { type: Boolean, default: true },
+    warningThreshold: { type: Number, default: 80 },
+    diaryMode: {
+      type: String,
+      enum: ['quick', 'detailed'],
+      default: 'quick',
+    },
   },
   { _id: false }
 )
@@ -130,6 +166,10 @@ const userSchema = new Schema<IUser>(
       type: preferencesSchema,
       default: () => ({}),
     },
+    dietSettings: {
+      type: dietSettingsSchema,
+      default: () => ({}),
+    },
     stats: {
       type: statsSchema,
       default: () => ({}),
@@ -147,11 +187,18 @@ const userSchema = new Schema<IUser>(
   {
     timestamps: true,
     toJSON: {
+      virtuals: true,
       transform: (_, ret) => {
+        // Transform _id to id for frontend compatibility
+        ret.id = ret._id?.toString()
+        delete ret._id
         delete ret.password
         delete ret.__v
         return ret
       },
+    },
+    toObject: {
+      virtuals: true,
     },
   }
 )
