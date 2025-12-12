@@ -23,6 +23,7 @@ import { problematicFoodsController } from '@/modules/problematic-foods'
 import { insightsController } from '@/modules/insights'
 import { newsController } from '@/modules/news'
 import { achievementsController } from '@/modules/achievements'
+import { adminController } from '@/modules/admin'
 
 // =============================================================================
 // Create App
@@ -173,6 +174,7 @@ export const app = new Elysia({ name: 'ceboelha-api' })
       .use(insightsController)
       .use(newsController)
       .use(achievementsController)
+      .use(adminController)
   )
 
   // ============================================================================

@@ -209,3 +209,28 @@ export function createGlobalRateLimiter() {
 }
 
 export const globalRateLimiter = createGlobalRateLimiter()
+
+// =============================================================================
+// Admin Rate Limiter (stricter for security)
+// =============================================================================
+
+/**
+ * Admin-specific rate limiter
+ * 30 requests per minute - stricter than general API
+ * Helps prevent abuse even from authenticated admins
+ */
+export const adminRateLimiter = createRateLimiter({
+  windowMs: 60000, // 1 minute
+  maxRequests: 3000,
+  message: 'Limite de requisições admin excedido. Aguarde antes de continuar.',
+})
+
+/**
+ * Admin write operations rate limiter (most strict)
+ * 10 requests per minute for create/update/delete operations
+ */
+export const adminWriteRateLimiter = createRateLimiter({
+  windowMs: 60000, // 1 minute  
+  maxRequests: 1000,
+  message: 'Muitas operações de escrita. Aguarde antes de continuar.',
+})

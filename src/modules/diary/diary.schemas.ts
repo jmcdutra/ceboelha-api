@@ -149,7 +149,12 @@ export const symptomsOverviewQuerySchema = t.Object({
 // =============================================================================
 
 export const entryIdParamSchema = t.Object({
-  id: t.String({ description: 'ID da entrada do diário' }),
+  // MongoDB ObjectId pattern - 24 hexadecimal characters
+  // This prevents routes like /diary/problematic-foods from matching /:id
+  id: t.String({ 
+    pattern: '^[a-fA-F0-9]{24}$',
+    description: 'ID da entrada do diário (MongoDB ObjectId)' 
+  }),
 })
 
 export const dayDateParamSchema = t.Object({

@@ -2,11 +2,14 @@
  * Problematic Foods Controller - Elysia Routes
  *
  * Endpoints:
- * - GET /diary/problematic-foods - Lista de alimentos problemáticos
- * - GET /diary/problematic-foods/food/:foodId - Buscar por foodId
- * - POST /diary/problematic-foods - Marcar alimento como problemático
- * - DELETE /diary/problematic-foods/:id - Remover da lista
- * - DELETE /diary/problematic-foods/:id/incidents/:incidentId - Remover incidente
+ * - GET /problematic-foods - Lista de alimentos problemáticos
+ * - GET /problematic-foods/food/:foodId - Buscar por foodId
+ * - POST /problematic-foods - Marcar alimento como problemático
+ * - DELETE /problematic-foods/:id - Remover da lista
+ * - DELETE /problematic-foods/:id/incidents/:incidentId - Remover incidente
+ * 
+ * NOTE: Prefixo mudou de /diary/problematic-foods para /problematic-foods
+ * O frontend deve usar /api/problematic-foods
  */
 
 import { Elysia } from 'elysia'
@@ -19,12 +22,12 @@ import {
 } from './problematic-foods.schemas'
 import { requireAuth } from '@/shared/middlewares'
 
-export const problematicFoodsController = new Elysia({ prefix: '/diary/problematic-foods' })
+export const problematicFoodsController = new Elysia({ prefix: '/problematic-foods' })
   // All routes require authentication
   .use(requireAuth)
 
   // ==========================================================================
-  // GET /diary/problematic-foods - Lista de alimentos problemáticos
+  // GET /problematic-foods - Lista de alimentos problemáticos
   // ==========================================================================
   .get(
     '/',

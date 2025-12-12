@@ -14,4 +14,13 @@ export {
   authRateLimiter,
   sensitiveRateLimiter,
   globalRateLimiter,
+  adminRateLimiter,
+  adminWriteRateLimiter,
 } from './rate-limiter.middleware'
+
+export {
+  adminSecurityMiddleware,
+  adminAuditMiddleware,
+  adminGuard,
+  type AdminAuthContext,
+} from './admin-security.middleware'
