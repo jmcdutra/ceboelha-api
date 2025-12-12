@@ -20,6 +20,8 @@ import { usersController } from '@/modules/users'
 import { foodsController } from '@/modules/foods'
 import { diaryController } from '@/modules/diary'
 import { problematicFoodsController } from '@/modules/problematic-foods'
+import { insightsController } from '@/modules/insights'
+import { newsController } from '@/modules/news'
 
 // =============================================================================
 // Create App
@@ -113,6 +115,7 @@ export const app = new Elysia({ name: 'ceboelha-api' })
           { name: 'Diary', description: 'Diário alimentar' },
           { name: 'Problematic Foods', description: 'Alimentos problemáticos' },
           { name: 'Insights', description: 'Insights e estatísticas' },
+          { name: 'News', description: 'Artigos, receitas e conteúdo educacional' },
           { name: 'Admin', description: 'Administração (requer role admin)' },
         ],
         components: {
@@ -165,6 +168,8 @@ export const app = new Elysia({ name: 'ceboelha-api' })
       .use(foodsController)
       .use(diaryController)
       .use(problematicFoodsController)
+      .use(insightsController)
+      .use(newsController)
   )
 
   // ============================================================================
