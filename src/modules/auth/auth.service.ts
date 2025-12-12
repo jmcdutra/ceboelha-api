@@ -190,26 +190,14 @@ export const authService = {
     // Check for special user 💕
     const isSpecialUser = isJulia(email)
 
-    // Create user
+    // Create user (stats always start at 0, even for special users)
     const user = await User.create({
       email,
       password,
       name: isSpecialUser ? `${name} 💕` : name,
       isSpecial: isSpecialUser,
       specialMessage: isSpecialUser ? getJuliaSpecialMessage() : undefined,
-      stats: isSpecialUser
-        ? {
-            daysUsingApp: 100,
-            totalMealsLogged: 500,
-            totalSymptomsLogged: 5,
-            currentStreak: 50,
-            longestStreak: 100,
-            achievementsUnlocked: 15,
-            foodsTested: 100,
-            triggersIdentified: 3,
-            lastActive: new Date(),
-          }
-        : undefined,
+      // Stats are initialized by schema defaults (all 0)
     })
 
     // Log successful registration

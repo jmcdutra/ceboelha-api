@@ -9,9 +9,8 @@
  */
 
 import { Elysia } from 'elysia'
-import { bearer } from '@elysiajs/bearer'
 import { User, type IUser } from '@/modules/users/user.model'
-import { authService, type JWTPayload } from '@/modules/auth/auth.service'
+import { authService } from '@/modules/auth/auth.service'
 import { UnauthorizedError, ForbiddenError } from '@/shared/errors'
 import {
   getTokenFromCookies,
@@ -30,61 +29,80 @@ export interface AuthContext {
 }
 
 // =============================================================================
-// Auth Middleware Plugin
+// Helper: Extract Bearer Token
+// =============================================================================
+
+function extractBearerTokenFromHeader(authHeader: string | null): string | null {
+  if (!authHeader) return null
+  const parts = authHeader.split(' ')
+  if (parts.length !== 2 || parts[0].toLowerCase() !== 'bearer') {
+    return null
+  }
+  return parts[1]
+}
+
+// =============================================================================
+// Helper: Get Auth Context from Request
+// =============================================================================
+
+async function getAuthFromRequest(request: Request): Promise<AuthContext | null> {
+  // Try to get token from:
+  // 1. Authorization header (Bearer token)
+  // 2. httpOnly cookie (more secure)
+  const authHeader = request.headers.get('authorization')
+  const tokenFromHeader = extractBearerTokenFromHeader(authHeader)
+  
+  const cookieHeader = request.headers.get('cookie')
+  const tokenFromCookie = getTokenFromCookies(cookieHeader, ACCESS_TOKEN_COOKIE)
+  
+  const token = tokenFromHeader || tokenFromCookie
+
+  // If no token found, return null (unauthenticated)
+  if (!token) {
+    return null
+  }
+
+  try {
+    // Verify the access token
+    const payload = await authService.verifyAccessToken(token)
+
+    // Find the user and verify they still exist and are active
+    const user = await User.findById(payload.sub)
+
+    if (!user) {
+      return null
+    }
+
+    // Check user status
+    if (user.status !== 'active') {
+      return null
+    }
+
+    // Return auth context
+    return {
+      user,
+      userId: user._id.toString(),
+      userRole: user.role,
+      isAdmin: user.role === 'admin',
+    }
+  } catch (error) {
+    // Token verification failed
+    return null
+  }
+}
+
+// =============================================================================
+// Auth Middleware Plugin (optional auth - doesn't throw)
 // =============================================================================
 
 /**
- * Creates the auth middleware plugin
- * Adds bearer token handling and user verification
- * 
- * SECURITY: Supports both:
- * 1. Authorization: Bearer <token> header
- * 2. httpOnly cookie (preferred, XSS-safe)
+ * Optional auth middleware - populates auth context if token present
+ * Does NOT throw if unauthenticated
  */
 export const authMiddleware = new Elysia({ name: 'auth-middleware' })
-  .use(bearer())
-  .derive({ as: 'scoped' }, async ({ bearer, request }): Promise<{ auth: AuthContext | null }> => {
-    // Try to get token from:
-    // 1. Bearer header (backward compatibility)
-    // 2. httpOnly cookie (more secure)
-    const cookieHeader = request.headers.get('cookie')
-    const tokenFromCookie = getTokenFromCookies(cookieHeader, ACCESS_TOKEN_COOKIE)
-    const token = bearer || tokenFromCookie
-
-    // If no token found, return null (unauthenticated)
-    if (!token) {
-      return { auth: null }
-    }
-
-    try {
-      // Verify the access token
-      const payload = await authService.verifyAccessToken(token)
-
-      // Find the user and verify they still exist and are active
-      const user = await User.findById(payload.sub)
-
-      if (!user) {
-        return { auth: null }
-      }
-
-      // Check user status
-      if (user.status !== 'active') {
-        return { auth: null }
-      }
-
-      // Return auth context
-      return {
-        auth: {
-          user,
-          userId: user._id.toString(),
-          userRole: user.role,
-          isAdmin: user.role === 'admin',
-        },
-      }
-    } catch (error) {
-      // Token verification failed
-      return { auth: null }
-    }
+  .derive({ as: 'scoped' }, async ({ request }): Promise<{ auth: AuthContext | null }> => {
+    const auth = await getAuthFromRequest(request)
+    return { auth }
   })
 
 // =============================================================================
@@ -93,25 +111,34 @@ export const authMiddleware = new Elysia({ name: 'auth-middleware' })
 
 /**
  * Require authentication - throws if not authenticated
+ * This is a STANDALONE middleware that extracts and validates auth
  */
 export const requireAuth = new Elysia({ name: 'require-auth' })
-  .use(authMiddleware)
-  .derive({ as: 'scoped' }, ({ auth }) => {
+  .derive({ as: 'scoped' }, async ({ request }): Promise<{ auth: AuthContext }> => {
+    const auth = await getAuthFromRequest(request)
+    
     if (!auth) {
       throw new UnauthorizedError('Autenticação necessária')
     }
-    return { auth: auth as AuthContext }
+    
+    return { auth }
   })
 
 /**
  * Require admin role - throws if not admin
  */
 export const requireAdmin = new Elysia({ name: 'require-admin' })
-  .use(requireAuth)
-  .derive({ as: 'scoped' }, ({ auth }) => {
-    if (!auth || !auth.isAdmin) {
+  .derive({ as: 'scoped' }, async ({ request }): Promise<{ auth: AuthContext }> => {
+    const auth = await getAuthFromRequest(request)
+    
+    if (!auth) {
+      throw new UnauthorizedError('Autenticação necessária')
+    }
+    
+    if (!auth.isAdmin) {
       throw new ForbiddenError('Acesso restrito a administradores')
     }
+    
     return { auth }
   })
 
