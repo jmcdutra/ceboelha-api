@@ -2,14 +2,14 @@
  * System Settings Model - Mongoose Schema (Singleton)
  */
 
-import mongoose, { Schema, type Document, type Model } from 'mongoose'
+import mongoose, { Schema, type Model } from 'mongoose'
 
 // =============================================================================
 // Interface
 // =============================================================================
 
-export interface ISystemSettings extends Document {
-  _id: string // Fixed ID: 'system_settings'
+export interface ISystemSettings {
+  _id: string // Fixed ID: 'system_settings' (singleton pattern)
   maintenance: {
     enabled: boolean
     message: string
@@ -52,7 +52,7 @@ export interface ISystemSettings extends Document {
 // Schema
 // =============================================================================
 
-const systemSettingsSchema = new Schema<ISystemSettings>(
+const systemSettingsSchema = new Schema(
   {
     _id: {
       type: String,
@@ -100,7 +100,8 @@ const systemSettingsSchema = new Schema<ISystemSettings>(
   {
     timestamps: { createdAt: false, updatedAt: true },
     toJSON: {
-      transform: (_, ret) => {
+      // biome-ignore lint/suspicious/noExplicitAny: Mongoose toJSON transform
+      transform: (_, ret: any) => {
         delete ret.__v
         return ret
       },

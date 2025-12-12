@@ -6,6 +6,8 @@
  * Usage: bun run scripts/seed-news.ts
  */
 
+/// <reference types="bun-types" />
+
 import mongoose from 'mongoose'
 import { NewsArticle, type ArticleCategory } from '../src/modules/news/news.model'
 import { connectDatabase } from '../src/config/database'

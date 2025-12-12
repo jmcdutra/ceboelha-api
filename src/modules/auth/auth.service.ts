@@ -15,6 +15,8 @@ import mongoose from 'mongoose'
 import { User, type IUser } from '@/modules/users/user.model'
 import { RefreshToken } from './refresh-token.model'
 import { LoginAttempt, AccountLockout } from './login-attempt.model'
+import * as achievementsService from '@/modules/achievements/achievements.service'
+import { ActivityLog } from '@/modules/admin/activity-log.model'
 import {
   ConflictError,
   UnauthorizedError,
@@ -208,6 +210,18 @@ export const authService = {
       userAgent: deviceInfo?.userAgent,
     })
 
+    // Activity Log - user_register
+    ActivityLog.create({
+      type: 'user_register',
+      userId: user._id,
+      userName: user.name,
+      userEmail: user.email,
+      action: 'Nova conta criada',
+      ip_address: deviceInfo?.ip,
+      user_agent: deviceInfo?.userAgent,
+      timestamp: new Date(),
+    }).catch(() => {}) // Fire and forget
+
     // Generate tokens
     const tokens = await this.createTokenPair(user, deviceInfo)
 
@@ -304,12 +318,29 @@ export const authService = {
       userAgent: deviceInfo?.userAgent,
     })
 
+    // Activity Log - user_login
+    ActivityLog.create({
+      type: 'user_login',
+      userId: user._id,
+      userName: user.name,
+      userEmail: user.email,
+      action: 'Login realizado',
+      ip_address: deviceInfo?.ip,
+      user_agent: deviceInfo?.userAgent,
+      timestamp: new Date(),
+    }).catch(() => {}) // Fire and forget
+
     // Update last active
     user.stats.lastActive = new Date()
     await user.save()
 
     // Generate tokens
     const tokens = await this.createTokenPair(user, deviceInfo)
+
+    // Give welcome achievement (first login)
+    achievementsService.updateProgress(user._id.toString(), 'first_login', 1).catch(() => {
+      // Ignore errors - achievement is nice-to-have
+    })
 
     return {
       user: user.toJSON() as Omit<IUser, 'password'>,
@@ -384,6 +415,19 @@ export const authService = {
         RefreshToken.hashToken(refreshTokenString),
         'User logout'
       )
+    }
+
+    // Activity Log - user_logout
+    const user = await User.findById(userId)
+    if (user) {
+      ActivityLog.create({
+        type: 'user_logout',
+        userId: user._id,
+        userName: user.name,
+        userEmail: user.email,
+        action: allDevices ? 'Logout de todos os dispositivos' : 'Logout realizado',
+        timestamp: new Date(),
+      }).catch(() => {}) // Fire and forget
     }
   },
 

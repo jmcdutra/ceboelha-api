@@ -15,7 +15,7 @@ import { env } from '@/config'
 // Error Response Type
 // =============================================================================
 
-interface ErrorResponse {
+export interface ErrorResponse {
   success: false
   error: string
   code?: string

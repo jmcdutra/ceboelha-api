@@ -188,7 +188,8 @@ const userSchema = new Schema<IUser>(
     timestamps: true,
     toJSON: {
       virtuals: true,
-      transform: (_, ret) => {
+      // biome-ignore lint/suspicious/noExplicitAny: Mongoose toJSON transform
+      transform: (_, ret: any) => {
         // Transform _id to id for frontend compatibility
         ret.id = ret._id?.toString()
         delete ret._id

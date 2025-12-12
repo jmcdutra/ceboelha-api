@@ -13,6 +13,8 @@ import mongoose from 'mongoose'
 import { DiaryEntry, type IDiaryEntry } from './diary.model'
 import { User } from '@/modules/users/user.model'
 import { NotFoundError, ForbiddenError, ValidationError } from '@/shared/errors'
+import { achievementsService } from '@/modules/achievements'
+import { ActivityLog } from '@/modules/admin/activity-log.model'
 import type {
   DiaryEntryType,
   MealData,
@@ -443,6 +445,42 @@ export async function createMealEntry(userId: string, data: CreateMealData) {
     // Silently ignore errors
   })
 
+  // Update achievements in background
+  achievementsService.recalculateMetrics(userId).catch(() => {
+    // Silently ignore errors - achievements are not critical
+  })
+
+  // Check for special achievements (night_owl, early_bird)
+  const hour = parseInt(meal.time.split(':')[0], 10)
+  if (hour >= 0 && hour < 6) {
+    // Between midnight and 6am
+    if (hour < 5) {
+      // Night owl: after midnight but before 5am
+      achievementsService.unlockCustom(userId, 'night_owl').catch(() => {})
+    } else {
+      // Early bird: 5am-6am
+      achievementsService.unlockCustom(userId, 'early_bird').catch(() => {})
+    }
+  }
+
+  // Activity Log - meal_logged
+  const user = await User.findById(userId)
+  if (user) {
+    ActivityLog.create({
+      type: 'meal_logged',
+      userId: user._id,
+      userName: user.name,
+      userEmail: user.email,
+      action: `Refeição registrada: ${meal.type}`,
+      details: JSON.stringify({ 
+        mealType: meal.type, 
+        foodsCount: meal.foods?.length || 0,
+        date 
+      }),
+      timestamp: new Date(),
+    }).catch(() => {}) // Fire and forget
+  }
+
   return formatEntry(entry)
 }
 
@@ -466,6 +504,29 @@ export async function createSymptomEntry(userId: string, data: CreateSymptomData
   updateUserStats(userId, 'symptom').catch(() => {
     // Silently ignore errors
   })
+
+  // Update achievements in background
+  achievementsService.recalculateMetrics(userId).catch(() => {
+    // Silently ignore errors - achievements are not critical
+  })
+
+  // Activity Log - symptom_logged
+  const user = await User.findById(userId)
+  if (user) {
+    ActivityLog.create({
+      type: 'symptom_logged',
+      userId: user._id,
+      userName: user.name,
+      userEmail: user.email,
+      action: `Sintoma registrado: ${symptom.type}`,
+      details: JSON.stringify({ 
+        symptomType: symptom.type, 
+        intensity: symptom.intensity,
+        date 
+      }),
+      timestamp: new Date(),
+    }).catch(() => {}) // Fire and forget
+  }
 
   return formatEntry(entry)
 }
@@ -530,7 +591,23 @@ export async function deleteEntry(userId: string, entryId: string) {
     throw new ForbiddenError('Você não tem permissão para deletar esta entrada')
   }
 
+  const entryType = entry.type
+
   await entry.deleteOne()
+
+  // Activity Log - entry_deleted
+  const user = await User.findById(userId)
+  if (user) {
+    ActivityLog.create({
+      type: 'entry_deleted',
+      userId: user._id,
+      userName: user.name,
+      userEmail: user.email,
+      action: `Entrada do diário deletada: ${entryType}`,
+      details: JSON.stringify({ entryId, entryType }),
+      timestamp: new Date(),
+    }).catch(() => {}) // Fire and forget
+  }
 }
 
 /**

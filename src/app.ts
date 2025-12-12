@@ -22,6 +22,7 @@ import { diaryController } from '@/modules/diary'
 import { problematicFoodsController } from '@/modules/problematic-foods'
 import { insightsController } from '@/modules/insights'
 import { newsController } from '@/modules/news'
+import { achievementsController } from '@/modules/achievements'
 
 // =============================================================================
 // Create App
@@ -116,6 +117,7 @@ export const app = new Elysia({ name: 'ceboelha-api' })
           { name: 'Problematic Foods', description: 'Alimentos problemáticos' },
           { name: 'Insights', description: 'Insights e estatísticas' },
           { name: 'News', description: 'Artigos, receitas e conteúdo educacional' },
+          { name: 'Achievements', description: 'Sistema de conquistas e gamificação' },
           { name: 'Admin', description: 'Administração (requer role admin)' },
         ],
         components: {
@@ -170,6 +172,7 @@ export const app = new Elysia({ name: 'ceboelha-api' })
       .use(problematicFoodsController)
       .use(insightsController)
       .use(newsController)
+      .use(achievementsController)
   )
 
   // ============================================================================

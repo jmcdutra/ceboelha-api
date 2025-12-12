@@ -7,6 +7,8 @@ import { ProblematicFood, type IProblematicFood } from './problematic-food.model
 import { Food } from '@/modules/foods/food.model'
 import { User } from '@/modules/users/user.model'
 import { NotFoundError } from '@/shared/errors'
+import { achievementsService } from '@/modules/achievements'
+import { ActivityLog } from '@/modules/admin/activity-log.model'
 import type { SymptomType, ProblematicFoodIncident } from '@/shared/types'
 
 // =============================================================================
@@ -106,6 +108,29 @@ export const problematicFoodsService = {
 
     // Update user stats
     await this.updateUserStats(userId)
+
+    // Update achievements in background
+    achievementsService.recalculateMetrics(userId).catch(() => {
+      // Silently ignore errors - achievements are not critical
+    })
+
+    // Activity Log - problematic_food_identified
+    const user = await User.findById(userId)
+    if (user) {
+      ActivityLog.create({
+        type: 'problematic_food_identified',
+        userId: user._id,
+        userName: user.name,
+        userEmail: user.email,
+        action: `Alimento problemático identificado: ${foodName}`,
+        details: JSON.stringify({ 
+          foodId: input.foodId, 
+          foodName,
+          symptomTypes: input.symptomTypes 
+        }),
+        timestamp: new Date(),
+      }).catch(() => {}) // Fire and forget
+    }
 
     return problematicFood.toObject()
   },

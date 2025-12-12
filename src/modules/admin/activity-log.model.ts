@@ -85,7 +85,8 @@ const activityLogSchema = new Schema<IActivityLog>(
   {
     timestamps: { createdAt: true, updatedAt: false },
     toJSON: {
-      transform: (_, ret) => {
+      // biome-ignore lint/suspicious/noExplicitAny: Mongoose toJSON transform
+      transform: (_, ret: any) => {
         delete ret.__v
         return ret
       },
