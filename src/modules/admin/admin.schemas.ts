@@ -83,6 +83,7 @@ export const createFoodBodySchema = t.Object({
   category_level_1: t.String({ minLength: 1 }),
   category_level_2: t.Optional(t.String()),
   category_level_3: t.Optional(t.String()),
+  image: t.Optional(t.String({ format: 'uri' })),
   fodmapLevel: t.Optional(fodmapLevelSchema),
   fodmapNote: t.Optional(t.String()),
 })
@@ -92,6 +93,7 @@ export const updateFoodBodySchema = t.Object({
   category_level_1: t.Optional(t.String()),
   category_level_2: t.Optional(t.String()),
   category_level_3: t.Optional(t.String()),
+  image: t.Optional(t.String({ format: 'uri' })),
   fodmapLevel: t.Optional(fodmapLevelSchema),
   fodmapNote: t.Optional(t.String()),
   isAiGenerated: t.Optional(t.Boolean()),

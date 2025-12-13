@@ -55,6 +55,7 @@ export interface IFood extends Document {
   category_level_1: string
   category_level_2?: string
   category_level_3?: string
+  image?: string
   fodmap?: FodmapInfo
   nutrition?: INutritionInfo
   data_sources: IDataSources
@@ -187,6 +188,10 @@ const foodSchema = new Schema<IFood>(
     },
     category_level_2: String,
     category_level_3: String,
+    image: {
+      type: String,
+      default: null,
+    },
     fodmap: fodmapSchema,
     nutrition: nutritionSchema,
     data_sources: dataSourcesSchema,

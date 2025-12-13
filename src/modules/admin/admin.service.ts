@@ -790,6 +790,7 @@ export async function createFood(data: {
   category_level_1: string
   category_level_2?: string
   category_level_3?: string
+  image?: string
   fodmapLevel?: FodmapLevel
   fodmapNote?: string
 }): Promise<IFood> {
@@ -804,6 +805,7 @@ export async function createFood(data: {
     category_level_1: data.category_level_1,
     category_level_2: data.category_level_2 || '',
     category_level_3: data.category_level_3 || '',
+    image: data.image || null,
     data_sources: {
       nutritional_data: 'admin_created',
     },
@@ -841,6 +843,7 @@ export async function updateFood(
     category_level_1?: string
     category_level_2?: string
     category_level_3?: string
+    image?: string
     fodmapLevel?: FodmapLevel
     fodmapNote?: string
     isAiGenerated?: boolean
@@ -852,6 +855,7 @@ export async function updateFood(
   if (data.category_level_1) updateData.category_level_1 = data.category_level_1
   if (data.category_level_2 !== undefined) updateData.category_level_2 = data.category_level_2
   if (data.category_level_3 !== undefined) updateData.category_level_3 = data.category_level_3
+  if (data.image !== undefined) updateData.image = data.image
   
   if (data.fodmapLevel) {
     updateData['fodmap.level'] = data.fodmapLevel
