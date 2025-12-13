@@ -25,7 +25,7 @@ export interface CookieOptions {
 export const SECURE_COOKIE_OPTIONS: CookieOptions = {
   httpOnly: true,
   secure: env.IS_PROD, // HTTPS only in production
-  sameSite: env.IS_PROD ? 'strict' : 'lax', // Strict in prod, lax in dev for localhost
+  sameSite: env.IS_PROD ? 'none' : 'lax', // None for cross-site in prod, lax in dev for localhost
   path: '/',
 }
 
