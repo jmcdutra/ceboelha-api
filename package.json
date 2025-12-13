@@ -9,6 +9,7 @@
     "dev": "bun run --watch src/index.ts",
     "start": "bun run src/index.ts",
     "test": "bun test",
+    "test:db": "bun run scripts/test-mongodb-connection.ts",
     "lint": "bunx biome check src/",
     "format": "bunx biome format src/ --write",
     "db:seed": "bun run src/scripts/seed.ts",
