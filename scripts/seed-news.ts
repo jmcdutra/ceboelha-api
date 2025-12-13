@@ -52,7 +52,7 @@ do seu, só seu.
 `,
     category: 'news' as ArticleCategory,
     tags: ['amor', 'pra-voce', 'jornada', 'presente'],
-    imageUrl: '/images/news/welcome_julia.png',
+    imageUrl: '/api/images/news/welcome_julia.png',
     author: {
       name: 'Seu Namorado',
       bio: 'Programando seu sorriso',
@@ -95,7 +95,7 @@ Respire fundo. Seu corpo é sábio e está fazendo o melhor que pode para te pro
 `,
     category: 'article' as ArticleCategory,
     tags: ['sii', 'ibs', 'educação', 'saúde', 'acolhimento', 'ciencia'],
-    imageUrl: '/images/news/ibs_understanding.png',
+    imageUrl: '/api/images/news/ibs_understanding.png',
     author: {
       name: 'Nutri Ceboelha',
     },
@@ -146,7 +146,7 @@ Use o app como sua memória externa. Libere sua mente dessa preocupação!
 `,
     category: 'tip' as ArticleCategory,
     tags: ['guia', 'dica', 'app', 'superpoder', 'tutorial'],
-    imageUrl: '/images/news/app_guide.png',
+    imageUrl: '/api/images/news/app_guide.png',
     author: {
       name: 'Ceboelha App',
     },
@@ -198,7 +198,7 @@ O cheirinho pela casa já começa a curar qualquer mal-estar! Espere amornar par
 `,
     category: 'recipe' as ArticleCategory,
     tags: ['receita', 'bolo', 'lanche', 'conforto', 'sem-gluten', 'sobremesa'],
-    imageUrl: '/images/news/carrot_cake.png',
+    imageUrl: '/api/images/news/carrot_cake.png',
     author: {
       name: 'Chef Ceboelha',
     },
@@ -279,7 +279,7 @@ Seja gentil com você mesma hoje. Você não precisa ser produtiva com dor. Seu 
 `,
     category: 'wellness' as ArticleCategory,
     tags: ['bem-estar', 'calma', 'respiração', 'apoio', 'mindfulness', 'sos'],
-    imageUrl: '/images/news/breathe.png',
+    imageUrl: '/api/images/news/breathe.png',
     author: {
       name: 'Ceboelha Zen',
     },
