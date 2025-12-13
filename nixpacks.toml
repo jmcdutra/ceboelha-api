@@ -1,0 +1,20 @@
+# =============================================================================
+# Nixpacks Configuration for Ceboelha API
+# =============================================================================
+# This tells Coolify to use Dockerfile instead of auto-detection
+
+[phases.setup]
+nixPkgs = []
+
+[phases.build]
+cmds = []
+
+[phases.install]
+cmds = []
+
+# Force Coolify to use Dockerfile
+[build]
+buildImage = "oven/bun:1"
+
+[start]
+cmd = "bun run src/index.ts"
