@@ -30,6 +30,7 @@ RUN groupadd --system --gid 1001 nodejs && \
 # Copy from builder
 COPY --from=builder --chown=bunjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=bunjs:nodejs /app/src ./src
+COPY --from=builder --chown=bunjs:nodejs /app/public ./public
 COPY --from=builder --chown=bunjs:nodejs /app/package.json ./
 COPY --from=builder --chown=bunjs:nodejs /app/tsconfig.json ./
 
@@ -38,10 +39,6 @@ USER bunjs
 
 # Expose port
 EXPOSE 3333
-
-# Health check using bun fetch
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD bun -e "fetch('http://localhost:3333/health').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"
 
 # Start the application
 CMD ["bun", "run", "src/index.ts"]
