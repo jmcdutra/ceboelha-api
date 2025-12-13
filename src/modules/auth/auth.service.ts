@@ -220,7 +220,7 @@ export const authService = {
       ip_address: deviceInfo?.ip,
       user_agent: deviceInfo?.userAgent,
       timestamp: new Date(),
-    }).catch(() => {}) // Fire and forget
+    }).catch((err) => console.error('[ActivityLog] Failed to log user_register:', err))
 
     // Generate tokens
     const tokens = await this.createTokenPair(user, deviceInfo)
@@ -328,7 +328,7 @@ export const authService = {
       ip_address: deviceInfo?.ip,
       user_agent: deviceInfo?.userAgent,
       timestamp: new Date(),
-    }).catch(() => {}) // Fire and forget
+    }).catch((err) => console.error('[ActivityLog] Failed to log user_login:', err))
 
     // Update last active
     user.stats.lastActive = new Date()
@@ -338,8 +338,8 @@ export const authService = {
     const tokens = await this.createTokenPair(user, deviceInfo)
 
     // Give welcome achievement (first login)
-    achievementsService.updateProgress(user._id.toString(), 'first_login', 1).catch(() => {
-      // Ignore errors - achievement is nice-to-have
+    achievementsService.updateProgress(user._id.toString(), 'first_login', 1).catch((err) => {
+      console.error('[Achievements] Failed to update first_login progress:', err)
     })
 
     return {
@@ -427,7 +427,7 @@ export const authService = {
         userEmail: user.email,
         action: allDevices ? 'Logout de todos os dispositivos' : 'Logout realizado',
         timestamp: new Date(),
-      }).catch(() => {}) // Fire and forget
+      }).catch((err) => console.error('[ActivityLog] Failed to log user_logout:', err))
     }
   },
 

@@ -221,7 +221,7 @@ export const globalRateLimiter = createGlobalRateLimiter()
  */
 export const adminRateLimiter = createRateLimiter({
   windowMs: 60000, // 1 minute
-  maxRequests: 3000,
+  maxRequests: 30,
   message: 'Limite de requisições admin excedido. Aguarde antes de continuar.',
 })
 
@@ -231,6 +231,6 @@ export const adminRateLimiter = createRateLimiter({
  */
 export const adminWriteRateLimiter = createRateLimiter({
   windowMs: 60000, // 1 minute  
-  maxRequests: 1000,
+  maxRequests: 10,
   message: 'Muitas operações de escrita. Aguarde antes de continuar.',
 })

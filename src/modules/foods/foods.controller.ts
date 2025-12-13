@@ -10,6 +10,7 @@
 import { Elysia } from 'elysia'
 import * as foodsService from './foods.service'
 import { foodsQuerySchema, foodIdParamSchema } from './foods.schemas'
+import { generalRateLimiter } from '@/shared/middlewares'
 import type { FodmapLevel } from '@/shared/types'
 
 // =============================================================================
@@ -17,6 +18,8 @@ import type { FodmapLevel } from '@/shared/types'
 // =============================================================================
 
 export const foodsController = new Elysia({ prefix: '/foods' })
+  // Apply rate limiting to prevent scraping
+  .use(generalRateLimiter)
 
   // ==========================================================================
   // GET /foods/categories - List available categories

@@ -34,7 +34,7 @@ export const app = new Elysia({ name: 'ceboelha-api' })
   // ============================================================================
   // Security Headers
   // ============================================================================
-  .onAfterHandle({ as: 'global' }, ({ set }) => {
+  .onAfterHandle({ as: 'global' }, ({ set, request }) => {
     // Prevent clickjacking
     set.headers['X-Frame-Options'] = 'DENY'
     // Prevent MIME type sniffing
@@ -43,8 +43,24 @@ export const app = new Elysia({ name: 'ceboelha-api' })
     set.headers['X-XSS-Protection'] = '1; mode=block'
     // Control referrer information
     set.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
-    // Content Security Policy
-    set.headers['Content-Security-Policy'] = "default-src 'self'"
+    
+    // Content Security Policy - Relaxed for Swagger docs
+    const isDocsRoute = request.url.includes('/docs')
+    if (isDocsRoute) {
+      // Allow Swagger/Scalar to load from CDN
+      set.headers['Content-Security-Policy'] = [
+        "default-src 'self'",
+        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+        "font-src 'self' data: https://fonts.scalar.com",
+        "img-src 'self' data: https:",
+        "connect-src 'self'",
+      ].join('; ')
+    } else {
+      // Strict CSP for API routes
+      set.headers['Content-Security-Policy'] = "default-src 'self'"
+    }
+    
     // Remove server signature
     set.headers['X-Powered-By'] = 'Ceboelha'
     // HSTS - Force HTTPS (only in production)
@@ -73,6 +89,7 @@ export const app = new Elysia({ name: 'ceboelha-api' })
   // ============================================================================
   .use(
     swagger({
+      scalarVersion: '1.25.55', // Pin specific version for stability
       documentation: {
         info: {
           title: 'Ceboelha API',

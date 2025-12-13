@@ -160,10 +160,8 @@ export const authController = new Elysia({ prefix: '/auth' })
         success: true,
         data: {
           user: result.user,
-          // Still return tokens in response for backward compatibility
-          // Frontend should migrate to using cookies instead
-          accessToken: result.accessToken,
-          refreshToken: result.refreshToken,
+          // Tokens are now sent ONLY via httpOnly cookies for security
+          // The expiresIn value helps the frontend know when to refresh
           expiresIn: result.expiresIn,
         },
         message: result.user.isSpecial
@@ -209,9 +207,7 @@ export const authController = new Elysia({ prefix: '/auth' })
         success: true,
         data: {
           user: result.user,
-          // Still return tokens in response for backward compatibility
-          accessToken: result.accessToken,
-          refreshToken: result.refreshToken,
+          // Tokens are now sent ONLY via httpOnly cookies for security
           expiresIn: result.expiresIn,
         },
         message: result.user.isSpecial
@@ -253,8 +249,7 @@ export const authController = new Elysia({ prefix: '/auth' })
       return {
         success: true,
         data: {
-          accessToken: result.accessToken,
-          refreshToken: result.refreshToken,
+          // Tokens are sent via httpOnly cookies only
           expiresIn: result.expiresIn,
         },
         message: 'Token renovado com sucesso',
