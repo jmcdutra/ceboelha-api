@@ -23,6 +23,7 @@ interface FoodData {
   category_level_1: string
   category_level_2?: string
   category_level_3?: string
+  image?: string
   fodmap?: {
     level: string
     portion_note?: string
@@ -73,7 +74,7 @@ async function seedFoods() {
 
   // Read JSON file - use process.cwd() for better Bun compatibility
   const projectRoot = process.cwd().replace(/[\\/]ceboelha-api$/, '')
-  const dataPath = join(projectRoot, 'ceboelha-data/output/unified_food_database.json')
+  const dataPath = join(projectRoot, 'ceboelha-data/output/unified_food_database_with_images.json')
   console.log(`📁 Reading data from: ${dataPath}`)
 
   let database: DatabaseFile
@@ -119,6 +120,7 @@ async function seedFoods() {
     category_level_1: food.category_level_1,
     category_level_2: food.category_level_2,
     category_level_3: food.category_level_3,
+    image: food.image,
     fodmap: food.fodmap ? {
       level: food.fodmap.level,
       portion_note: food.fodmap.portion_note || null,

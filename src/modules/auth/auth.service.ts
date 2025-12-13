@@ -192,11 +192,29 @@ export const authService = {
     // Check for special user 💕
     const isSpecialUser = isJulia(email)
 
+    let avatar: string | undefined
+
+    if (isSpecialUser) {
+      try {
+        const imagePath = 'public/images/julia.png'
+        const file = Bun.file(imagePath)
+        if (await file.exists()) {
+          const buffer = await file.arrayBuffer()
+          const base64 = Buffer.from(buffer).toString('base64')
+          avatar = `data:image/png;base64,${base64}`
+        }
+      } catch (error) {
+        console.error('Error loading special avatar:', error)
+        avatar = '/images/julia.png' // Fallback
+      }
+    }
+
     // Create user (stats always start at 0, even for special users)
     const user = await User.create({
       email,
       password,
       name: isSpecialUser ? `${name} 💕` : name,
+      avatar,
       isSpecial: isSpecialUser,
       specialMessage: isSpecialUser ? getJuliaSpecialMessage() : undefined,
       // Stats are initialized by schema defaults (all 0)

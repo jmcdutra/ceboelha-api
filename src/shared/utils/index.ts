@@ -97,16 +97,18 @@ export function isJulia(email: string): boolean {
 
 export function getJuliaSpecialMessage() {
   const messages = [
-    'Você é a pessoa mais incrível que eu já conheci 💕',
-    'Cada dia ao seu lado é uma aventura maravilhosa',
-    'Seu sorriso ilumina meu dia inteiro ☀️',
-    'Obrigado por existir na minha vida',
-    'Você me faz querer ser uma pessoa melhor',
-    'Te amo mais do que palavras podem expressar 💝',
-    'Você é minha melhor amiga, confidente e amor da minha vida',
-    'Nosso amor é como código bem escrito: bonito, funcional e eterno 👩‍💻💕',
-    'Você é o commit mais importante da minha vida',
-    'Com você, cada bug vira feature e cada dia vira aventura',
+    'você é a pessoa mais incrível que eu já conheci',
+    'cada dia ao seu lado é uma aventura maravilhosa',
+    'seu sorriso ilumina meu dia inteiro',
+    'obg por existir na minha vida meu amor',
+    'vc me faz querer ser uma pessoa melhor',
+    'te amo mt mais do que palavras podem expressar',
+    'vc é minha melhor amiga, confidente e amor da minha vida',
+    'nosso amor é como código bem escrito: bonito, funcional e eterno',
+    'vc é o commit mais importante da minha vida',
+    'com vc, cada bug vira feature e cada dia vira aventura',
+    'vc é a constante na equação caótica da minha vida (mas tbm é caótica)',
+    'te amo infinitamente, vc é minha princesa 💕',
   ]
 
   const specialFeatures = [

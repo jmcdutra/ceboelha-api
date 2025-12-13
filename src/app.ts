@@ -13,6 +13,7 @@ import { Elysia } from 'elysia'
 import { cors } from '@elysiajs/cors'
 import { swagger } from '@elysiajs/swagger'
 import { env } from '@/config'
+import { staticPlugin } from '@elysiajs/static'
 import { errorHandler } from '@/shared/errors'
 import { globalRateLimiter } from '@/shared/middlewares'
 import { authController } from '@/modules/auth'
@@ -43,7 +44,7 @@ export const app = new Elysia({ name: 'ceboelha-api' })
     set.headers['X-XSS-Protection'] = '1; mode=block'
     // Control referrer information
     set.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
-    
+
     // Content Security Policy - Relaxed for Swagger docs
     const isDocsRoute = request.url.includes('/docs')
     if (isDocsRoute) {
@@ -60,7 +61,7 @@ export const app = new Elysia({ name: 'ceboelha-api' })
       // Strict CSP for API routes
       set.headers['Content-Security-Policy'] = "default-src 'self'"
     }
-    
+
     // Remove server signature
     set.headers['X-Powered-By'] = 'Ceboelha'
     // HSTS - Force HTTPS (only in production)
@@ -154,6 +155,14 @@ export const app = new Elysia({ name: 'ceboelha-api' })
       exclude: ['/docs', '/docs/json'],
     })
   )
+
+  // ============================================================================
+  // Static Files
+  // ============================================================================
+  .use(staticPlugin({
+    assets: 'public',
+    prefix: '/'
+  }))
 
   // ============================================================================
   // Global Plugins
